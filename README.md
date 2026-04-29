@@ -4,6 +4,40 @@ Progetto di sistemi operativi di Shuhui Chen e Chiara Protopapa
 SHUHUI CHEN 		
 CHIARA PROTOPAPA	
 
+﻿Progetto Sistemi Operativi: Simulatore di Algoritmi di Paging
+
+1. Descrizione Generale del Progetto
+L'obiettivo di questo progetto è sviluppare un simulatore di diversi algoritmi di rimpiazzo delle pagine.
+Il progetto prevede l'utilizzo di linguaggio C per la logica di simulazione e di scripting Bash per l'orchestrazione, la compilazione e l'analisi dei risultati.
+
+Struttura del Progetto:
+* Programma C:
+   * Implementa la struttura della memoria fisica (suddivisa in frame di pagina).
+   * Legge file di traccia dove ogni riga contiene un indirizzo virtuale (espresso in byte).
+   * Calcola il numero di pagina virtuale a partire dall'indirizzo virtuale, assumendo una dimensione di pagina di 4KB (4096 byte).   
+   * Gestisce le richieste di accesso alle pagine virtuali (derivate dagli indirizzi) in ordine sequenziale come appaiono nel file di traccia.
+   * Implementa almeno due algoritmi di rimpiazzo delle pagine (e.g., FIFO, LRU, Clock, Ottimale, …). Si consideri una politica di rimpiazzo globale (i page frame sono condivisi tra tutti i processi).
+   * Colleziona statistiche come il numero di page fault e page hit.
+   * Se vengono implementati algoritmi che utilizzano i bit R (Referenced) e M (Modified) e richiedono un loro reset periodico (e.g., Second Chance), il programma dovrà accettare un parametro per l'intervallo di reset (espresso in numero di riferimenti processati o "tick" logici).
+   * Gestione dei Riferimenti:
+      * Accetta dalla linea di comando un elenco di uno o più percorsi a file di traccia.
+      * Definisce una macro QUANTUM all'interno del codice C. Questo QUANTUM specifica il numero massimo di righe (riferimenti di indirizzo) da processare da ciascun file di traccia prima di passare al file successivo in modalità round-robin.
+      * Il programma apre tutti i file di traccia. In un ciclo principale, itera sui file: per file1 processa fino a QUANTUM righe, poi per file2 fino a QUANTUM righe, e così via, tornando ciclicamente al primo file. Questo ciclo continua finché tutti i riferimenti da tutti i file non sono stati processati.
+      * Lo stato della memoria fisica (contenuto dei frame) e il contatore di tempo logico persistono attraverso la processazione di questi "quanta" e attraverso i diversi file.
+      * Le statistiche vengono aggregate su tutti i riferimenti processati da tutti i file in quella esecuzione.
+
+* Script Bash:
+   * Funge da orchestratore per l'intero processo.
+   * Verifica la presenza del codice sorgente C e lo compila per generare l'eseguibile, gestendo eventuali errori.
+   * Input: Dimensione della RAM (espressa in numero di page frame disponibili), il percorso a una cartella contenente i file di traccia dei processi (ognuno con indirizzi virtuali), e l'eventuale parametro per l'intervallo di reset dei bit R/M per algoritmi specifici.
+   * Esecuzione:
+      * Lancia l'eseguibile C compilato, fornendogli i parametri necessari (numero di frame, lista dei file traccia, l'algoritmo da usare, ed eventuale intervallo di reset). Esegue il programma C due volte, una per ciascun algoritmo di rimpiazzo.
+   * Post-elaborazione:
+      * Controlla che il programma C sia terminato correttamente per ogni esecuzione.
+      * Cattura l'output (possibili metodi: Il programma C stampa su file; il programma bash cattura lo stdout del programma C) del programma C (che conterrà le statistiche per quel file di traccia e quell'algoritmo).
+      * Stampa sullo standard output i risultati.
+   * Rimuove eventuali file temporanei creati durante l'esecuzione.
+
 
 PROGRAMMA IN C 
 Main.c
